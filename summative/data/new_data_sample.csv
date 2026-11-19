@@ -1,0 +1,31 @@
+country,region,language,location,gender,age,grade,year,familiar_words_per_min,listening_comprehension_pct,words_per_minute
+Malawi,15,Chichewa,Rural,Male,11,2,2011,0.0,60.000001999999995,0.0
+Rwanda,Eastern,Kinyarwanda,Rural,Male,6,1,2018,12.0,60.0,8.709677696228027
+Ethiopia,3 - Amhara,Amharic,Rural,Female,12,2,2010,50.84745788574219,60.000001999999995,62.068965911865234
+Tanzania,12 - Njombe,Kiswahili,Rural,Female,7,2,2013,23.0,80.0,9.0
+Tanzania,5 - Kagera,Kiswahili,Urban,Female,8,2,2013,20.0,20.0,18.0
+Malawi,3,Chichewa,Rural,Female,10,2,2011,0.0,80.000001,0.0
+Ethiopia,14 - Addis Ababa,Amharic,Urban,Male,9,3,2010,69.0,80.000001,64.80000305175781
+Malawi,30,Chichewa,Rural,Male,10,2,2010,0.0,20.0,0.0
+Ethiopia,13 - Harari,Afan Oromo,Rural,Male,10,2,2010,31.0,100.0,61.132076263427734
+Malawi,10,Chichewa,Rural,Male,8,2,2010,0.0,0.0,0.0
+Ethiopia,1 - Tigray,Tigrinya,Rural,Female,9,2,2010,9.0,60.000001999999995,0.0
+Ethiopia,1 - Tigray,Tigrinya,Rural,Male,7,2,2010,8.0,20.0,0.0
+Ethiopia,4 - Oromiya,Afan Oromo,Rural,Female,9,3,2010,34.0,100.0,38.0
+Malawi,18,Chichewa,Rural,Female,9,2,2010,0.0,0.0,0.0
+Malawi,24,Chichewa,Rural,Male,12,4,2010,0.0,0.0,0.0
+Ethiopia,4 - Oromiya,Afan Oromo,Rural,Female,8,2,2010,0.0,100.0,0.0
+Rwanda,Eastern,Kinyarwanda,Urban,Male,8,2,2018,28.0,80.0,35.625
+Malawi,7,Chichewa,Rural,Male,12,2,2010,0.0,40.000001,0.0
+Ethiopia,3 - Amhara,Amharic,Rural,Male,9,2,2010,0.0,0.0,0.0
+Rwanda,Northern,Kinyarwanda,Rural,Female,9,3,2018,30.0,100.0,26.22222137451172
+Ethiopia,3 - Amhara,Amharic,Rural,Male,10,2,2010,22.0,100.0,31.0
+Malawi,13,Chichewa,Rural,Female,9,4,2011,13.0,20.0,21.0
+Malawi,7,Chichewa,Rural,Female,8,2,2010,0.0,60.000001999999995,0.0
+Tanzania,9 - Mara,Kiswahili,Urban,Male,8,2,2013,31.0,100.0,21.0
+Ethiopia,13 - Harari,Afan Oromo,Rural,Male,9,2,2010,15.0,83.333331,12.0
+Ethiopia,5 - Somali,Somaligna,Rural,Female,9,2,2010,22.0,80.000001,37.0
+Ethiopia,5 - Somali,Somaligna,Rural,Female,9,2,2010,40.0,40.000001,51.0
+Ethiopia,7 - SNNPR,Sidaamu Afoo,Urban,Male,10,3,2010,40.0,100.0,36.0
+Ethiopia,4 - Oromiya,Afan Oromo,Rural,Female,9,3,2010,27.0,100.0,31.0
+Malawi,18,Chichewa,Rural,Female,9,2,2010,0.0,20.0,0.0
