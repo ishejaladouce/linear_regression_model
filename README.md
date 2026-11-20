@@ -1,69 +1,79 @@
 # Reading Fluency Predictor
 
-## Mission
-My mission is to nurture compassionate, responsible young leaders by equipping
-children with practical life skills, character and opportunities to discover their talents.
-Reading is the foundation of all of this, so this project predicts a child's reading
-speed to help find children who need reading support early.
+## Mission and Problem
+My mission is to nurture compassionate, responsible young leaders by equipping children aged 7-12 with life skills, character and talent discovery through hands-on learning, mentorship and community service, so they grow into confident individuals who positively impact their families, communities and the world.
 
-## Problem
-Many early-grade pupils in East Africa cannot yet read fluently, and teachers often
-find out too late. This model predicts how many words per minute (wpm) a child can
-read correctly, using a few simple details about the child and their reading skills.
+**Problem:** many children cannot read fluently, and it is noticed too late, so this app predicts reading speed to help mentors support them early.
 
 ## Dataset
-Early-grade reading assessment data on more than 200,000 pupils from **Ethiopia, Malawi,
-Rwanda and Tanzania** (cleaned to 24,360 children aged 5 to 14).
-Inputs: country, test language, school location, gender, age, grade,
-familiar words per minute and listening comprehension (%).
-Target: words read correctly per minute.
+I used early-grade reading assessment data from **Ethiopia, Malawi, Rwanda and Tanzania**. After cleaning, it has **24,360 children** aged 5 to 14.
+Each row describes one child: country, test language, school location, gender, age, grade, familiar words read per minute and listening comprehension (%).
+The target is the number of **words a child reads correctly per minute**.
 
-Source: [ https://doi.org/10.25828/2287-mw84 ]
+Source: https://doi.org/10.25828/2287-mw84 
 
-## Model
-I compared Linear Regression (SGD), Decision Tree and Random Forest using MSE and
-Huber loss. The **Random Forest** had the lowest test error, so it is saved and used by the API.
+## API (Swagger UI)
+Test the API here: https://reading-fluency-api-srxu.onrender.com/docs
 
-## API (live)
-- Swagger UI: https://reading-fluency-api-srxu.onrender.com/docs
-- `POST /predict`: returns the predicted words per minute for one child
-- `POST /retrain`: upload a CSV with new data to retrain the model
+- `POST /predict`: send one child's details and get the predicted words per minute.
+- `POST /retrain`: upload a CSV of new data and the model retrains straight away.
+  You can try it with `summative/data/new_data_sample.csv`.
 
-Note: the API is on Render's free plan, so the first request can take up to a minute while it wakes up.
+The API runs on Render's free plan, so the first request may take up to a minute while it wakes up.
 
-## Video demo
+## Video Demo
 []
 
-## How to run the mobile app
-1. Install Flutter and start an Android emulator (or connect a phone).
+## How to Run the Mobile App
+1. Install [Flutter](https://docs.flutter.dev/get-started/install) and start an Android emulator, or connect your phone.
 2. Clone this repository:
-   `git clone https://github.com/ishejaladouce/linear_regression_model.git`
-3. Go to the app folder:
-   `cd linear_regression_model/summative/FlutterApp`
-4. Install the packages: `flutter pub get`
-5. Run the app: `flutter run`
-6. Fill in all 8 fields (e.g. Rwanda, Kinyarwanda, Rural, Female, 9, 3, 25, 60)
-   and tap **Predict**.
+   ```
+   git clone https://github.com/ishejaladouce/linear_regression_model.git
+   ```
+3. Open the app folder:
+   ```
+   cd linear_regression_model/summative/FlutterApp
+   ```
+4. Install the packages:
+   ```
+   flutter pub get
+   ```
+5. Run the app:
+   ```
+   flutter run
+   ```
+6. Fill in all 8 fields and tap **Predict**. For example: Rwanda, Kinyarwanda, Rural, Female, 9, 3, 25, 60.
 
-## Repository structure
+## Model
+I compared four models: Linear Regression with gradient descent (SGDRegressor), Linear Regression (closed form), Decision Tree and Random Forest. I also tuned the trees to stop them from overfitting.
 
+| Model | Train MSE | Test MSE |
+|---|---|---|
+| **Random Forest (max_depth=12)** | 38.7 | **47.0** |
+| Decision Tree (max_depth=8) | 47.6 | 53.0 |
+| Linear Regression | 56.2 | 53.6 |
+| SGDRegressor | 56.2 | 53.7 |
+
+The tuned **Random Forest** has the lowest test MSE (47.0, about 7 words per minute of error), so it is the model the API uses.
+
+## Repository Structure
+```
 linear_regression_model/
 ├── README.md
-├── .gitignore
 └── summative/
-    ├── .python-version
-    ├── pyproject.toml                       # Python packages (uv)
+    ├── pyproject.toml
     ├── uv.lock
     ├── data/
-    │   ├── ahead_reading_fluency.csv        # cleaned dataset
-    │   └── new_data_sample.csv              # 30 new rows to test /retrain
+    │   ├── ahead_reading_fluency.csv      # cleaned dataset
+    │   └── new_data_sample.csv            # new rows to test /retrain
     ├── linear_regression/
-    │   └── multivariate.ipynb               # data, charts, models, best model
+    │   └── multivariate.ipynb             # data, charts, models, best model
     ├── API/
-    │   ├── prediction.py                    # FastAPI app (predict + retrain)
-    │   ├── requirements.txt                 # packages for Render
-    │   ├── best_model.pkl                   # saved Random Forest
-    │   └── training_data.csv                # data used when retraining
-    └── FlutterApp/
-        ├── lib/main.dart                    # the mobile app
-        └── pubspec.yaml
+    │   ├── prediction.py                  # FastAPI app (/predict and /retrain)
+    │   ├── retrain.py                     # retraining logic
+    │   ├── uv.lock
+    │   ├── pyproject.toml
+    │   ├── requirements.txt               # packages for Render
+    │   ├── best_model.pkl                 # saved Random Forest
+    │   └── training_data.csv              # data used when retraining
+    └── FlutterApp/                        # Flutter mobile app
