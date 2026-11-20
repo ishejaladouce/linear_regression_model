@@ -1,10 +1,5 @@
-"""Reading Fluency Prediction API.
+"""API that predicts how many words per minute a child can read."""
 
-Predicts how many words per minute an early-grade pupil in East Africa
-can read correctly, using the best model trained in multivariate.ipynb.
-"""
-
-import io
 from pathlib import Path
 from typing import Literal
 
@@ -14,19 +9,12 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
-from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+from retrain import FEATURES, retrain_model
 
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR / "best_model.pkl"
 DATA_PATH = BASE_DIR / "training_data.csv"
-
-CATEGORICAL_FEATURES = ["country", "language", "location", "gender"]
-NUMERIC_FEATURES = ["age", "grade", "familiar_words_per_min", "listening_comprehension_pct"]
-FEATURES = CATEGORICAL_FEATURES + NUMERIC_FEATURES
-TARGET = "words_per_minute"
 
 # Load the saved model and the original training data once, when the API starts.
 model = joblib.load(MODEL_PATH)
@@ -39,20 +27,17 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# ---------------------------------------------------------------
-# CORS settings
-# Allowed origins : only our Render URL and local test addresses.
-#                   No "*" wildcard, so other websites are blocked.
-# Allowed methods : GET and POST, the only ones this API uses.
-# Allowed headers : Content-Type, needed to send JSON and CSV files.
-# Credentials     : False, because the API uses no cookies or logins.
-# The Flutter mobile app is not a browser, so CORS does not limit it.
-# ---------------------------------------------------------------
+# CORS: I only allow my Render URL and two local test addresses, not "*",
+# so other websites can't call my API from a browser.
+# I allow only GET and POST because those are the only methods I use,
+# and only the Content-Type header, which is needed to send JSON and CSV files.
+# Credentials are off because the API has no logins or cookies.
+# The Flutter app is not a browser, so CORS doesn't block it.
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://YOUR-SERVICE-NAME.onrender.com",
+        "https://reading-fluency-api-srxu.onrender.com",
         "http://localhost:8080",
         "http://localhost:3000",
     ],
@@ -78,17 +63,6 @@ class ChildData(BaseModel):
     listening_comprehension_pct: float = Field(ge=0, le=100, description="Listening comprehension score in percent")
 
 
-def build_pipeline() -> Pipeline:
-    """Same preprocessing and Random Forest settings as the best model in the notebook."""
-    preprocessor = ColumnTransformer([
-        ("categorical", OneHotEncoder(handle_unknown="ignore"), CATEGORICAL_FEATURES),
-        ("numeric", StandardScaler(), NUMERIC_FEATURES),
-    ])
-    forest = RandomForestRegressor(
-        n_estimators=200, max_depth=12, min_samples_leaf=5, random_state=42, n_jobs=-1)
-    return Pipeline([("preprocessor", preprocessor), ("model", forest)])
-
-
 @app.get("/", include_in_schema=False)
 def home():
     return RedirectResponse(url="/docs")
@@ -109,29 +83,12 @@ async def retrain(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Please upload a .csv file.")
 
     try:
-        new_data = pd.read_csv(io.BytesIO(await file.read()))
-    except Exception:
-        raise HTTPException(status_code=400, detail="The file could not be read as a CSV.")
-
-    missing = [col for col in FEATURES + [TARGET] if col not in new_data.columns]
-    if missing:
-        raise HTTPException(status_code=400, detail=f"Missing columns: {missing}")
-
-    new_data = new_data[FEATURES + [TARGET]].dropna()
-    if new_data.empty:
-        raise HTTPException(status_code=400, detail="The file has no complete rows.")
-
-    # The best model is a Random Forest, so we refit it on the original data plus the new rows.
-    combined = pd.concat([training_data, new_data], ignore_index=True)
-    new_model = build_pipeline()
-    new_model.fit(combined[FEATURES], combined[TARGET])
-
-    model = new_model
-    training_data = combined
-    joblib.dump(model, MODEL_PATH, compress=3)
+        model, training_data, rows_added = retrain_model(await file.read(), training_data, MODEL_PATH)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
 
     return {
         "message": "Model retrained and now in use.",
-        "new_rows_added": len(new_data),
-        "total_training_rows": len(combined),
+        "new_rows_added": rows_added,
+        "total_training_rows": len(training_data),
     }
