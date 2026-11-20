@@ -45,14 +45,17 @@ The API runs on Render's free plan, so the first request may take up to a minute
 6. Fill in all 8 fields and tap **Predict**. For example: Rwanda, Kinyarwanda, Rural, Female, 9, 3, 25, 60.
 
 ## Model
-I compared four models: Linear Regression with gradient descent (SGDRegressor), Linear Regression (closed form), Decision Tree and Random Forest. I also tuned the trees to stop them from overfitting.
+I compared four types of models: Linear Regression with gradient descent (SGDRegressor), Linear Regression (closed form), Decision Tree and Random Forest. I trained SGD with both MSE and Huber loss, and I tuned the two tree models to stop them from overfitting.
 
 | Model | Train MSE | Test MSE |
 |---|---|---|
 | **Random Forest (max_depth=12)** | 38.7 | **47.0** |
 | Decision Tree (max_depth=8) | 47.6 | 53.0 |
 | Linear Regression | 56.2 | 53.6 |
-| SGDRegressor | 56.2 | 53.7 |
+| SGD (MSE loss) | 56.2 | 53.7 |
+| SGD (Huber loss) | 56.5 | 54.1 |
+| Random Forest (untuned) | 13.8 | 56.8 |
+| Decision Tree (untuned) | 7.7 | 94.7 |
 
 The tuned **Random Forest** has the lowest test MSE (47.0, about 7 words per minute of error), so it is the model the API uses.
 
