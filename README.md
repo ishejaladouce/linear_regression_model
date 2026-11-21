@@ -61,6 +61,7 @@ The tuned **Random Forest** has the lowest test MSE (47.0, about 7 words per min
 
 ## Repository Structure
 
+```
 linear_regression_model/
 ├── README.md
 └── summative/
@@ -80,3 +81,4 @@ linear_regression_model/
     │   ├── best_model.pkl                 # saved Random Forest
     │   └── training_data.csv              # data used when retraining
     └── FlutterApp/                        # Flutter mobile app
+    ```
