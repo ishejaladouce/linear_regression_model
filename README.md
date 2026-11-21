@@ -22,7 +22,7 @@ Test the API here: https://reading-fluency-api-srxu.onrender.com/docs
 The API runs on Render's free plan, so the first request may take up to a minute while it wakes up.
 
 ## Video Demo
-[]
+https://youtu.be/djErljtTemI?si=g7qDf7U4KWeiJDvp
 
 ## How to Run the Mobile App
 1. Install [Flutter](https://docs.flutter.dev/get-started/install) and start an Android emulator, or connect your phone.
@@ -60,7 +60,7 @@ I compared four types of models: Linear Regression with gradient descent (SGDReg
 The tuned **Random Forest** has the lowest test MSE (47.0, about 7 words per minute of error), so it is the model the API uses.
 
 ## Repository Structure
-```
+
 linear_regression_model/
 ├── README.md
 └── summative/
